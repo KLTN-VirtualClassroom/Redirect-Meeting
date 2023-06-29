@@ -85,26 +85,7 @@ async function authorize() {
  */
 async function addEvent(auth) {
   const calendar = google.calendar({ version: "v3", auth });
-  // const res = await calendar.events.list({
-  //   calendarId: 'primary',
-  //   timeMin: new Date().toISOString(),
-  //   maxResults: 10,
-  //   singleEvents: true,
-  //   orderBy: 'startTime',
-  // });
-  // const events = res.data.items;
-  // if (!events || events.length === 0) {
-  //   console.log('No upcoming events found.');
-  //   return;
-  // }
-  // console.log('Upcoming 10 events:');
-  // events.map((event, i) => {
-  //   const start = event.start.dateTime || event.start.date;
-  //   console.log(`${start} - ${event.summary}`);
-  // });
-
   let meetingLink = "";
-
   await calendar.events.insert(
     {
       calendarId: "primary",
@@ -152,7 +133,7 @@ async function addEvent(auth) {
 }
 
 app.get("/schedule_event", async (req, res) => {
-  const teacherEmail = req.query.email
+  const teacherEmail = req.query.email;
   authorize().then(async (auth) => {
     const calendar = google.calendar({ version: "v3", auth });
 
@@ -190,19 +171,42 @@ app.get("/schedule_event", async (req, res) => {
           console.log(
             "There was an error contacting the Calendar service: " + err
           );
-          res.send ({
+          res.send({
             msg: "There was an error contacting the Calendar service: " + err,
           });
           return;
         }
         console.log("Event created: %s", event.data.hangoutLink);
         meetingLink = event.data.hangoutLink;
-         res.send ({
+        res.send({
           msg: meetingLink,
         });
       }
     );
   });
+});
+
+app.get("/re-authenticate", (req, res) => {
+  fs.exists("./token.json", function (exists) {
+    console.log(exists);
+    if (exists) {
+      //Show in green
+      fs.unlink("./token.json", function (err) {
+        if (err) return console.log(err);
+        console.log("file deleted successfully");
+        res.json({
+          msg: "File deleted successfully",
+        });
+      });
+    } else {
+      //Show in red
+      console.log("not exist file");
+      res.json({
+        msg: "File not exist",
+      });
+    }
+  });
+  authorize()
 });
 
 // app.get("/google", (req, res) => {
