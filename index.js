@@ -194,19 +194,20 @@ app.get("/re-authenticate", (req, res) => {
       fs.unlink("./token.json", function (err) {
         if (err) return console.log(err);
         console.log("file deleted successfully");
+        authorize()
         res.json({
           msg: "File deleted successfully",
         });
       });
     } else {
       //Show in red
+      authorize()
       console.log("not exist file");
       res.json({
         msg: "File not exist",
       });
     }
   });
-  authorize()
 });
 
 // app.get("/google", (req, res) => {
