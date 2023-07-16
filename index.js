@@ -195,9 +195,9 @@ app.get("/re-authenticate", (req, res) => {
         if (err) return console.log(err);
         console.log("file deleted successfully");
         authorize()
-        res.json({
-          msg: "File deleted successfully",
-        });
+        // res.json({
+        //   msg: "File deleted successfully",
+        // });
       });
     } else {
       //Show in red
